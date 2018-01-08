@@ -34,6 +34,15 @@
 				<module>android-lib</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>jdk9</id>
+			<activation>
+				<jdk>9</jdk>
+			</activation>
+			<modules>
+				<module>richclient-jlink</module>
+			</modules>
+		</profile>
 	</profiles>
 
 </project>
