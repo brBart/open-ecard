@@ -41,9 +41,24 @@ public class ServiceResponseStatusCodes {
     public static final int NFC_NOT_ENABLED = 101;
 
     /**
+     * indicates that the corresponding device does not support the required API level.
+     */
+    public static final int NOT_REQUIRED_API_LEVEL = 102;
+
+    /**
      * indicates that the corresponding smartphone device doesn't support nfc with extended length.
      */
     public static final int NFC_NO_EXTENDED_LENGTH = 103;
+
+    /**
+     * Indicates that the Open eCard Service is active and running.
+     */
+    public static final int OEC_SERVICE_IS_ACTIVE = 104;
+
+    /**
+     * Indicates that the Open eCard Service is not active.
+     */
+    public static final int OEC_SERVICE_IS_NOT_ACTIVE = 105;
 
     /**
      * indicates that the initialization was successfully finished.
@@ -54,11 +69,6 @@ public class ServiceResponseStatusCodes {
      * indicates that the app was successfully terminated.
      */
     public static final int SHUTDOWN_SUCCESS = 200;
-
-    /**
-     * indicates that the corresponding device does not support the required API level.
-     */
-    public static final int NOT_REQUIRED_API_LEVEL = 102;
 
     /**
      * indicates other internal errors.
