@@ -23,8 +23,6 @@
 package org.openecard.android.system;
 
 import android.app.Activity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -38,8 +36,6 @@ import org.slf4j.LoggerFactory;
  * @author Mike Prechtl
  */
 public class OpeneCardServiceClientHandler {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OpeneCardServiceClientHandler.class);
 
     private final Activity activity;
     private final OpeneCardServiceClient client;

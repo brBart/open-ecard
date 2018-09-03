@@ -48,13 +48,16 @@ public class OpeneCardServiceClient {
     private static final Logger LOG = LoggerFactory.getLogger(OpeneCardServiceClient.class);
 
     private final Context appCtx;
+
+    // connection to Open eCard Service
     private Promise<OpeneCardService> oecService;
-    private boolean isInitialized;
+
+    // Intent which is used to start the Open eCard Service
+    private static Promise<Intent> oecIntent = new Promise<>();
 
     public OpeneCardServiceClient(Context appCtx) {
 	this.appCtx = appCtx;
-	oecService = new Promise<>();
-	isInitialized = false;
+	this.oecService = new Promise<>();
     }
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {
@@ -63,29 +66,41 @@ public class OpeneCardServiceClient {
 	    LOG.info("Open eCard Service bound.");
 	    OpeneCardService s = OpeneCardService.Stub.asInterface(service);
 	    oecService.deliver(s);
-	    isInitialized = true;
 	}
 
 	@Override
 	public void onServiceDisconnected(ComponentName componentName) {
 	    oecService = new Promise<>();
-	    isInitialized = false;
 	}
     };
 
     /**
-     * Synchronously start the Open eCard Stack.
+     * Synchronously start the Open eCard Stack. This method starts the Open eCard Service, initializes the
+     * stack and does the binding to the service. If the stack is already initialized, only the binding is done.
      *
      * @return The result of the start function.
      */
     public ServiceResponse startService() {
 	try {
-	    if (! isInitialized) {
-		Intent i = createOpeneCardIntent();
-		appCtx.bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+	    // check if Open eCard service is already running
+	    if (! isInitialized()) {
+		// deliver Open eCard Service intent if it is not delivered already
+		if (! oecIntent.isDelivered()) {
+		    Intent i = createOpeneCardIntent();
+		    oecIntent.deliver(i);
+		}
+
+		// start Open eCard Service
+		Intent i = oecIntent.deref();
+		appCtx.startService(i);
 	    }
 
-	    // wait until service is connected, then call startService
+	    // bind Open eCard service to this client
+	    Intent i = oecIntent.deref();
+	    appCtx.bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+
+	    // wait until service is connected, then initialize Open eCard service
+	    // this step is ignored when it is already initialized ;)
 	    OpeneCardService s = oecService.deref();
 	    return s.startService();
 	} catch (InterruptedException | RemoteException ex) {
@@ -101,14 +116,20 @@ public class OpeneCardServiceClient {
      */
     public ServiceResponse stopService() throws IllegalStateException {
 	try {
-	    if (! isInitialized) {
+	    if (! isInitialized()) {
 		throw new IllegalStateException("Trying to stop uninitialized service.");
 	    }
 
-	    // stop then unbind service
+	    // terminate the Open eCard stuff
 	    OpeneCardService s = oecService.deref();
 	    ServiceResponse res = s.stopService();
-	    unbindService();
+
+	    // stop the Open eCard Service
+	    Intent i = oecIntent.deref();
+	    appCtx.stopService(i);
+
+	    oecIntent = new Promise<>();
+
 	    return res;
 	} catch (InterruptedException | RemoteException ex) {
 	    return new ServiceErrorResponse(INTERNAL_ERROR, ex.getMessage());
@@ -117,7 +138,7 @@ public class OpeneCardServiceClient {
 
     /**
      * Unbinds the service client.
-     * This call removes the binding, so te service can be GCed properly.
+     * This call removes the binding, so the service can be GCed properly.
      *
      * @see Context#unbindService(ServiceConnection)
      */
@@ -132,12 +153,22 @@ public class OpeneCardServiceClient {
      * @return {@code true} if the stack is initialized, {@code false} otherwise.
      */
     public boolean isInitialized() {
-	return isInitialized;
+	OpeneCardService service = this.oecService.derefNonblocking();
+	if (service != null) {
+	    ServiceResponse response;
+	    try {
+		response = service.isActive();
+		return response.getStatusCode() == ServiceResponseStatusCodes.OEC_SERVICE_IS_ACTIVE;
+	    } catch (RemoteException ex) {
+		// ignore
+	    }
+	}
+	return false;
     }
 
     /**
      * Gets the context object when the Open eCard Stack is intialized.
-     * 
+     *
      * @return The context object.
      * @throws IllegalStateException Thrown in case the stack is not initialized.
      * @see {@link #isInitialized()} for information when this method may be called.
