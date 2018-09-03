@@ -354,6 +354,10 @@ public class OpeneCardContext {
 	return gui;
     }
 
+    public boolean isInitialized() {
+	return initialized;
+    }
+
     @Nonnull
     public UserConsentNavigatorFactory<? extends AndroidGui> getGuiNavigatorFactory(Class<? extends AndroidGui> guiClass)
 	    throws IllegalArgumentException {

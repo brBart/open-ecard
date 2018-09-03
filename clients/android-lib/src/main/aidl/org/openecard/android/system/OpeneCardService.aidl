@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2017 ecsec GmbH.
+ * Copyright (C) 2017-2018 ecsec GmbH.
  * All rights reserved.
  * Contact: ecsec GmbH (info@ecsec.de)
  *
@@ -27,8 +27,10 @@ import org.openecard.android.system.ServiceResponse;
 
 interface OpeneCardService {
 
-    ServiceResponse startService();
+	ServiceResponse startService();
 
-    ServiceResponse stopService();
+	ServiceResponse isActive();
+
+	ServiceResponse stopService();
 
 }

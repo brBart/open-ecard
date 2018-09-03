@@ -138,7 +138,21 @@ public class OpeneCardServiceImpl extends Service {
 		return new ServiceResponse(SHUTDOWN_SUCCESS, SERVICE_TERMINATE_SUCCESS);
 	    }
 	}
-	
+
+	@Override
+	public ServiceResponse isActive() throws RemoteException {
+	    ServiceResponse response;
+
+	    // check if context is given and initialized
+	    if (context != null && context.isInitialized()) {
+		response = new ServiceResponse(OEC_SERVICE_IS_ACTIVE, OEC_IS_ACTIVE);
+	    } else {
+		response = new ServiceErrorResponse(OEC_SERVICE_IS_NOT_ACTIVE, OEC_IS_NOT_ACTIVE);
+	    }
+
+	    return response;
+	}
+
 	private OpeneCardContext initializeContext() throws UnableToInitialize, NfcUnavailable, NfcDisabled, ApduExtLengthNotSupported {
 	    OpeneCardContext octx = new OpeneCardContext(getApplicationContext());
 	    octx.initialize();
