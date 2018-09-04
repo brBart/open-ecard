@@ -49,12 +49,12 @@ public class EacNavigatorFactory implements UserConsentNavigatorFactory<EacGui> 
 	    throw new IllegalArgumentException("This factory explicitly does not support the given user consent description.");
 	}
 
-	ifaceReceiver.setUiInterface(new EacGuiImpl());
 	return new EacNavigator(uc, ifaceReceiver);
     }
 
     @Override
     public Promise<? extends EacGui> getIfacePromise() {
+	ifaceReceiver.setUiInterface(new EacGuiImpl());
 	return ifaceReceiver.getUiInterface();
     }
 

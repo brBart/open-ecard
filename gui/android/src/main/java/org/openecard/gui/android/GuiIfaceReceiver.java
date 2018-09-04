@@ -59,6 +59,9 @@ public class GuiIfaceReceiver <T> {
     }
 
     public void setUiInterface(@Nonnull T uiInterface) {
+	if (this.uiInterface.isDelivered()) {
+	    terminate();
+	}
 	this.uiInterface.deliver(uiInterface);
     }
 
