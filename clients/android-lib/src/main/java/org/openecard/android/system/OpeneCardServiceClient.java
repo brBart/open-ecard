@@ -163,7 +163,11 @@ public class OpeneCardServiceClient {
 		// ignore
 	    }
 	}
-	return false;
+
+	// otherwise service is not bound to client, but maybe active?
+	// try to get Open eCard context directly
+	OpeneCardContext ctx = OpeneCardServiceImpl.getContext();
+	return ctx != null && ctx.isInitialized();
     }
 
     /**
