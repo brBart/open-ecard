@@ -57,11 +57,8 @@ public class OpeneCardServiceClientHandler {
     public void startService() {
 	new Thread(() -> {
 	    final ServiceResponse r = client.startService();
-	    activity.runOnUiThread(new Runnable() {
-		@Override
-		public void run() {
-		    mapStartServiceResult(r);
-		}
+	    activity.runOnUiThread(() -> {
+		mapStartServiceResult(r);
 	    });
 	}, "OeC Service Start").start();
     }
@@ -78,11 +75,8 @@ public class OpeneCardServiceClientHandler {
     public void stopService() {
 	new Thread(() -> {
 	    final ServiceResponse r = client.stopService();
-	    activity.runOnUiThread(new Runnable() {
-		@Override
-		public void run() {
-		    mapStopServiceResult(r);
-		}
+	    activity.runOnUiThread(() -> {
+		mapStopServiceResult(r);
 	    });
 	}, "OeC Service Stop").start();
     }
