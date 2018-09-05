@@ -40,10 +40,10 @@ import org.openecard.common.ifd.scio.SCIOException;
  */
 public class NFCCardChannel implements SCIOChannel {
 
-    private final NFCCard card;
+    private final NFCCardTerminal terminal;
 
-    public NFCCardChannel(NFCCard card) {
-	this.card = card;
+    public NFCCardChannel(NFCCardTerminal terminal) {
+	this.terminal = terminal;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class NFCCardChannel implements SCIOChannel {
 
     @Override
     public SCIOCard getCard() {
-	return card;
+	return terminal.getNfcCard();
     }
 
     @Override
@@ -68,6 +68,10 @@ public class NFCCardChannel implements SCIOChannel {
 
     @Override
     public CardResponseAPDU transmit(byte[] apdu) throws SCIOException {
+	// Use card from terminal, because if card is removed during APDU command exchange
+	// then no new connect to the terminal occurs and therefore, the IFD would work with
+	// the old card instance and hence, the channel would work with the old SCIO card
+	NFCCard card = terminal.getNfcCard();
 	synchronized (card) {
 	    try {
 		return new CardResponseAPDU(card.transceive(apdu));

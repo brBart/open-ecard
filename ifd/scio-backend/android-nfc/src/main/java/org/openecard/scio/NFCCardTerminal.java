@@ -165,4 +165,8 @@ public class NFCCardTerminal implements SCIOTerminal {
 	return isCardPresent();
     }
 
+    NFCCard getNfcCard() {
+	return nfcCard;
+    }
+
 }

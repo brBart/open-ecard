@@ -66,7 +66,7 @@ public class NFCCard implements SCIOCard {
 
 	isodep.connect();
 
-	this.nfcCardChannel = new NFCCardChannel(this);
+	this.nfcCardChannel = new NFCCardChannel(terminal);
 
 	// start thread which is monitoring the availability of the card
 	monitor = getMonitor();
