@@ -122,15 +122,23 @@ public class OpeneCardServiceClient {
 		throw new IllegalStateException("Trying to stop uninitialized service.");
 	    }
 
-	    // terminate the Open eCard stuff
+	    // Terminating Open eCard Stack only possible by communicating with Oec Service
+	    if (! boundToService) {
+		// Bind to service to get a OpeneCardService instance
+		startService();
+	    }
+
+	    // terminate the Open eCard stack
 	    OpeneCardService s = oecService.deref();
 	    ServiceResponse res = s.stopService();
+	    oecService = new Promise<>();
 
 	    // stop the Open eCard Service
 	    Intent i = oecIntent.deref();
 	    appCtx.stopService(i);
 
-	    boundToService = false;
+	    // Unbind Service
+	    unbindService();
 	    oecIntent = new Promise<>();
 
 	    return res;
