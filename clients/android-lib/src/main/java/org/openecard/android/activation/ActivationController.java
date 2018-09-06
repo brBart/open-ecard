@@ -1,4 +1,4 @@
-/****************************************************************************
+ /****************************************************************************
  * Copyright (C) 2017 ecsec GmbH.
  * All rights reserved.
  * Contact: ecsec GmbH (info@ecsec.de)
@@ -126,6 +126,16 @@ public class ActivationController {
 		break;
 	    case INTERRUPTED:
 		activationResult = new ActivationResult(INTERRUPTED, result.getResultMessage());
+		break;
+	    case DEPENDING_HOST_UNREACHABLE:
+		activationResult = new ActivationResult(DEPENDING_HOST_UNREACHABLE, result.getResultMessage());
+		break;
+	    case WRONG_PARAMETER:
+	    case MISSING_PARAMETER:
+		activationResult = new ActivationResult(CLIENT_ERROR, result.getResultMessage());
+		break;
+	    case RESOURCE_UNAVAILABLE:
+		activationResult = new ActivationResult(RESOURCE_UNAVAILABLE, result.getResultMessage());
 		break;
 	    default:
 		activationResult = new ActivationResult(INTERNAL_ERROR, result.getResultMessage());
