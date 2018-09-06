@@ -51,12 +51,14 @@ public class OpeneCardServiceClient {
 
     // connection to Open eCard Service
     private Promise<OpeneCardService> oecService;
+    private boolean boundToService;
 
     // Intent which is used to start the Open eCard Service
     private static Promise<Intent> oecIntent = new Promise<>();
 
     public OpeneCardServiceClient(Context appCtx) {
 	this.appCtx = appCtx;
+	this.boundToService = false;
 	this.oecService = new Promise<>();
     }
 
@@ -97,7 +99,7 @@ public class OpeneCardServiceClient {
 
 	    // bind Open eCard service to this client
 	    Intent i = oecIntent.deref();
-	    appCtx.bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+	    boundToService = appCtx.bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
 
 	    // wait until service is connected, then initialize Open eCard service
 	    // this step is ignored when it is already initialized ;)
@@ -128,6 +130,7 @@ public class OpeneCardServiceClient {
 	    Intent i = oecIntent.deref();
 	    appCtx.stopService(i);
 
+	    boundToService = false;
 	    oecIntent = new Promise<>();
 
 	    return res;
@@ -143,7 +146,10 @@ public class OpeneCardServiceClient {
      * @see Context#unbindService(ServiceConnection)
      */
     public void unbindService() {
-	appCtx.unbindService(serviceConnection);
+	if (boundToService) {
+	    appCtx.unbindService(serviceConnection);
+	    boundToService = false;
+	}
     }
 
     /**

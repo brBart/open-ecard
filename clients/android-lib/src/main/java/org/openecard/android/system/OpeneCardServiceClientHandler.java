@@ -64,9 +64,7 @@ public class OpeneCardServiceClientHandler {
     }
 
     public void unbindService() {
-	new Thread(() -> {
-	    client.unbindService();
-	}, "OeC Service Unbind").start();
+	client.unbindService();
     }
 
     /**
